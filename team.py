@@ -1,5 +1,6 @@
 """Holds the team class which performs calculations about the team"""
 import pymongo
+from typing import Union
 
 
 class Team:
@@ -24,14 +25,14 @@ class Team:
             return avg / len(numbers)
         return 0
 
-    def _avg_balls(self):
+    def _avg_balls(self) -> float:
         """Calculate the average balls scored"""
         balls = []  # Gather the balls scored per match
         for match in self.db.matches.find({"team_num": self.team_num}):
             balls.append(match["num_balls"])
         return self._avg(balls)
 
-    def _climb_success(self):
+    def _climb_success(self) -> float:
         """Calculate the climb success percentage"""
         climb = []  # Gather the climb status of matches played
         for match in self.db.matches.find({"team_num": self.team_num}):
@@ -41,14 +42,14 @@ class Team:
                 climb.append(0)
         return self._avg(climb)
 
-    def _matches_played(self):
+    def _matches_played(self) -> int:
         """Return the number of matches played"""
         matches = self.db.matches.find({"team_num": self.team_num})
         if matches:  # Check if the team has played any matches
             return len(list(matches))
         return 0
 
-    def _least_balls(self):
+    def _least_balls(self) -> Union[int, None]:
         """Return the least number of balls scored out of all matches"""
         least_balls = None  # Return None if the team hasn't played matches
         for match in self.db.matches.find({"team_num": self.team_num}):
@@ -58,7 +59,7 @@ class Team:
                 least_balls = match["num_balls"]
         return least_balls
 
-    def _most_balls(self):
+    def _most_balls(self) -> Union[int, None]:
         """Return the highest number of balls stored in a match out of all matches"""
         most_balls = None  # Return None if the team hasn't played matches
         for match in self.db.matches.find({"team_num": self.team_num}):
@@ -68,7 +69,7 @@ class Team:
                 most_balls = match["num_balls"]
         return most_balls
 
-    def run_calcs(self):
+    def run_calcs(self) -> None:
         """Runs methods to perform the calcs of the team"""
         # Remove the existing team document
         self.db.teams.delete_many({"team_num": self.team_num})
