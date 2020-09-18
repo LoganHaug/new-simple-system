@@ -1,6 +1,19 @@
 """Holds the team class which performs calculations about the team"""
-import pymongo
 from typing import Union
+import pymongo
+
+
+def avg(numbers: list) -> float:
+    """Calculate the average of a list of numbers
+
+    numbers is a list of numbers
+    Returns a float representing the average"""
+    if len(numbers) != 0:  # Check if the list is empty
+        count = 0
+        for number in numbers:
+            count += number
+        return count / len(numbers)
+    return 0
 
 
 class Team:
@@ -13,24 +26,12 @@ class Team:
         self.team_num = team_num
         self.db = pymongo.MongoClient("localhost", 27017).scouting_system
 
-    def _avg(self, numbers: list) -> float:
-        """Calculate the average of a list of numbers
-
-        numbers is a list of numbers
-        Returns a float representing the average"""
-        if len(numbers) != 0:  # Check if the list is empty
-            avg = 0
-            for number in numbers:
-                avg += number
-            return avg / len(numbers)
-        return 0
-
     def _avg_balls(self) -> float:
         """Calculate the average balls scored"""
         balls = []  # Gather the balls scored per match
         for match in self.db.matches.find({"team_num": self.team_num}):
             balls.append(match["num_balls"])
-        return self._avg(balls)
+        return avg(balls)
 
     def _climb_success(self) -> float:
         """Calculate the climb success percentage"""
@@ -40,7 +41,7 @@ class Team:
                 climb.append(1)
             else:
                 climb.append(0)
-        return self._avg(climb)
+        return avg(climb)
 
     def _matches_played(self) -> int:
         """Return the number of matches played"""
